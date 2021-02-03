@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.humanize',
     'fcuser',
     'order',
     'product'
@@ -59,7 +60,7 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [],
-        'APP_DIRS': True,
+        'APP_DIRS': True, # 모든 앱의 템플릿을 다 찾아본다는 뜻 -> 각 앱마다 base.html이 중복되게 있을 필요 없음 
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
