@@ -8,8 +8,29 @@
                 <h5 class ="card-title"> {{ product.name }} </h5>
             </div>
             <ul class="list-group list-group-flush">
+                <li class="list-group-item">
+                    <form method="POST" action="/order/create/"> <!-- 이 주소로 폼을 전달-->
+                        {% csrf_token %}
+                        {% for field in form %}
+                        <div class = "form-group">
+                            {% ifnotequal field.name 'product' %}
+                            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {% endifnotequal %}
+                            <input type="{{ field.field.widget.input_type }}" class="form-control" id="{{ field.id_for_label }}" 
+                                placeholder="{{ field.label }}" name ="{{ field.name }}" value="{% ifequal field.name 'product' %} {{ product.id }} {% endifequal %}"/>
+                        </div>
+                        {% if field.errors %}
+                        <span style="color: red">{{ field.errors }}</span>
+                        {% endif %}
+                        {% endfor %}
+                        <button type="submit" class="btn btn-primary">주문하기</button>
+                    </form>
+                </li>
+            </ul>
+            <ul class="list-group list-group-flush">
                 <li class= "list-group-item"> 가격: {{ product.price | intcomma}} 원 </li>
                 <li class= "list-group-item"> 등록날짜:  {{ product.register_date | date:'Y-m-d H:i'}}</li>
+                <li class= "list-group-item"> 재고:  {{ product.stock| intcomma }}</li>
                 <li class= "list-group-item"> 내용: {{ product.description | safe}}</li> <!-- 태그를 텍스트로 보여주는게 아니라 태그 자체로 사용하기 위해 safe 필터 걸기-->
             </ul>
         </div>        
