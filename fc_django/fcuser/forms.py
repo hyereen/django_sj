@@ -35,13 +35,7 @@ class RegisterForm(forms.Form):
             if password != re_password:
                 self.add_error('password', '비밀번호가 서로 다릅니다.')
                 self.add_error('re_password', '비밀번호가 서로 다릅니다.')
-            else:
-                fcuser = Fcuser(
-                    email=email,
-                    password=make_password(password)
-                )
-                fcuser.save()
-
+            # else 부분을 없애고 view.py로 분리
 
 class LoginForm(forms.Form):
     email = forms.EmailField(
@@ -72,6 +66,7 @@ class LoginForm(forms.Form):
                 
             if not check_password(password, fcuser.password): # 앞: 입력받은 값 / 뒤: 디비에서 가져온 비밀번호
                 self.add_error('password', '비밀번호가 틀렸습니다') 
-            else: 
-                self.email = fcuser.email
+                # else 부분을 없애고 view.py로 분리
+            # else: 
+            #     self.email = fcuser.email
 

@@ -31,18 +31,17 @@ class RegisterForm(forms.Form):
         # 사용자 정보를 가져오기위해 session을 이용해야 함
         fcuser = self.request.session.get('user') # 이메일을 가져올 것
 
-        if quantity and product and fcuser:
-            with transaction.atomic(): # 트랜잭션으로 처리가 됨
-                prod = Product.objects.get(pk=product)
-                order = Order(
-                    quantity = quantity,
-                    product = prod,
-                    fcuser = Fcuser.objects.get(email=fcuser)
-                )
-                order.save()
-                prod.stock -= quantity
-                prod.save()
-        else:
-            self.product = product
+        if not(quantity and product):
+            # 트랜잭션을views.py orderCreate의 form_valid로 
+            # with transaction.atomic(): # 트랜잭션으로 처리가 됨
+            #     prod = Product.objects.get(pk=product)
+            #     order = Order(
+            #         quantity = quantity,
+            #         product = prod,
+            #         fcuser = Fcuser.objects.get(email=fcuser)
+            #     )
+            #     order.save()
+            #     prod.stock -= quantity
+            #     prod.save()
             self.add_error('quantity', '값이 없습니다.')
             self.add_error('product', '값이 없습니다.')

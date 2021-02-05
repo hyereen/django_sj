@@ -3,8 +3,11 @@ from django.views.generic.edit import FormView
 from django.views.generic import ListView
 from django.utils.decorators import method_decorator # 장고에서 데코레이터를 넣을 수 있게끔 제공해주는 함수
 from fcuser.decorators import login_required
+from django.db import transaction
 from .forms import RegisterForm
 from .models import Order
+from product.models import Product
+from fcuser.models import Fcuser
 
 # Create your views here.
 @method_decorator(login_required, name='dispatch')
@@ -13,8 +16,22 @@ class OrderCreate(FormView):
     form_class = RegisterForm
     success_url = '/product/'
 
+    def form_valid(self, form):
+        with transaction.atomic(): # 트랜잭션으로 처리가 됨
+            prod = Product.objects.get(pk=form.data.get('product'))
+            order = Order(
+                quantity = form.data.get('quantity'),
+                product = prod,
+                fcuser = Fcuser.objects.get(email=self.request.session.get('user'))
+            )
+            order.save()
+            prod.stock -= int(form.data.get('quantity'))
+            prod.save()
+        
+        return super().form_valid(form)
+
     def form_invalid(self, form):
-        return redirect('/product/'+ str(form.product))
+        return redirect('/product/' + str(form.data.get('product')))
 
     # 클래스 기반 뷰 안에 기본적으로 이 함수가 있음
     def get_form_kwargs(self, **kwargs):
