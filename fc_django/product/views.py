@@ -2,10 +2,37 @@ from django.shortcuts import render
 from django.views.generic import ListView, DetailView
 from django.views.generic.edit import FormView
 from django.utils.decorators import method_decorator # decorators import 주의! 
+from rest_framework import generics
+from rest_framework import mixins
+
 from fcuser.decorators import admin_required # decorators import 주의! 
 from .models import Product
 from .forms import RegisterForm
+from .serializers import ProductSerializer
 from order.forms import RegisterForm as OrderForm
+
+# 레스트프레임 뷰
+class ProductListAPI(generics.GenericAPIView, mixins.ListModelMixin):
+
+    serializer_class = ProductSerializer # 데이터 검증을 위한 시리얼라이저 등록
+
+    def get_queryset(self): # 어떤 데이터를 가져올지 명시
+        return Product.objects.all().order_by('id') # 모든 데이터 가져옴 
+
+    def get(self, request, *args, **kwargs): #이렇게 해서 원하는 API를 만들 수 있음
+        return self.list(request, *args, **kwargs)
+
+class ProductDetailAPI(generics.GenericAPIView, mixins.RetrieveModelMixin): # 상세보기를 위한 믹스인
+
+    serializer_class = ProductSerializer 
+
+    def get_queryset(self): 
+        return Product.objects.all().order_by('id') 
+
+    def get(self, request, *args, **kwargs): 
+        return self.retrieve(request, *args, **kwargs)
+
+
 
 class ProductList(ListView):
     model = Product
