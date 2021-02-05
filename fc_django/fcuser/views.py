@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views.generic.edit import FormView
 from .forms import RegisterForm, LoginForm
 
@@ -24,3 +24,9 @@ class LoginView(FormView):
         self.request.session['user'] = form.email # 사용자가 로그인한 이메일 정보를 세션에 저장
 
         return super().form_valid(form) # 기존의 form_valid 함수 호출 
+
+def logout(request):
+    if 'user' in request.session:
+        del(request.session['user'])
+
+    return redirect('/')

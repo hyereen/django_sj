@@ -1,6 +1,8 @@
 from django.shortcuts import render
 from django.views.generic import ListView, DetailView
 from django.views.generic.edit import FormView
+from django.utils.decorators import method_decorator # decorators import 주의! 
+from fcuser.decorators import admin_required # decorators import 주의! 
 from .models import Product
 from .forms import RegisterForm
 from order.forms import RegisterForm as OrderForm
@@ -10,6 +12,7 @@ class ProductList(ListView):
     template_name = 'product.html'
     context_object_name = 'product_list'
 
+@method_decorator(admin_required, name='dispatch') # 사실 로그인만이 아니라 관리자가 로그인했을 때 상품 등록이 가능해야 함
 class ProductCreate(FormView):
     template_name = 'register_product.html'
     form_class = RegisterForm

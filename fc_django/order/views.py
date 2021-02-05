@@ -1,10 +1,13 @@
 from django.shortcuts import render, redirect
 from django.views.generic.edit import FormView
 from django.views.generic import ListView
+from django.utils.decorators import method_decorator # 장고에서 데코레이터를 넣을 수 있게끔 제공해주는 함수
+from fcuser.decorators import login_required
 from .forms import RegisterForm
 from .models import Order
 
 # Create your views here.
+@method_decorator(login_required, name='dispatch')
 class OrderCreate(FormView):
     # template_name은 필요가 없다 왜냐하면 폼뷰를 화면을 보여주는 용도로 사용하는게 아니기때문에! 화면은 product_detail에 있어서
     form_class = RegisterForm
@@ -22,6 +25,8 @@ class OrderCreate(FormView):
         return kw
     #폼을 생성할 떄 어떤 인자값을 전달해서 만들건지 결정하는 함수 
 
+
+@method_decorator(login_required, name='dispatch') # 실제로 dispatch함수가 실행되는 것 
 class OrderList(ListView):
     model = Order
     template_name= 'order.html'
